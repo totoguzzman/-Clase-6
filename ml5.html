@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ml5.js — MobileNet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>ml5.js — MobileNet</h1>
+    <p>Clasifica una imagen y muestra Top‑5 probabilidades (y gráfico) usando ml5.js + Chart.js.</p>
+    <nav>
+      <a class="btn" href="index.html">Inicio</a>
+      <a class="btn" href="chart-bar.html">Barras</a>
+      <a class="btn" href="chart-line.html">Líneas</a>
+      <a class="btn" href="tabla.html">Tabla (Chile)</a>
+    </nav>
+  </header>
+  <main>
+    <section class="card">
+      <header><h2>Imagen</h2></header>
+      <div class="content">
+        <img id="inputImage" crossorigin="anonymous" alt="Imagen de ejemplo"
+             src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Golden_retriever_eating_pigs_foot.jpg/640px-Golden_retriever_eating_pigs_foot.jpg"
+             style="max-width:100%;border-radius:12px;border:1px solid #1f2937"/>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <input type="url" id="imageUrl" placeholder="Pega URL de imagen (opcional)" style="flex:1;min-width:240px;padding:10px;border-radius:10px;border:1px solid #1f2937;background:#0b1220;color:#e5e7eb" />
+          <button id="btnLoad" class="btn" style="background:#38bdf8">Cargar URL</button>
+          <button id="btnClassify" class="btn" disabled>Clasificar</button>
+        </div>
+        <p id="status" style="margin-top:10px;opacity:.9">Cargando modelo MobileNet…</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <header><h2>Resultados</h2></header>
+      <div class="content">
+        <canvas id="chart" height="320"></canvas>
+        <div id="list" style="margin-top:12px"></div>
+      </div>
+    </section>
+  </main>
+  <footer>ml5.js desde CDN (incluye TensorFlow.js).</footer>
+
+<script>
+let classifier=null; let chart=null;
+const statusEl=document.getElementById('status');
+const imgEl=document.getElementById('inputImage');
+const btnClassify=document.getElementById('btnClassify');
+
+ml5.imageClassifier('MobileNet')
+ .then(m=>{classifier=m; statusEl.textContent='Modelo listo ✔️'; btnClassify.disabled=false;})
+ .catch(e=>{console.error(e); statusEl.textContent='Error cargando el modelo';});
+
+document.getElementById('btnLoad').addEventListener('click',()=>{
+  const url=document.getElementById('imageUrl').value.trim();
+  if(url) imgEl.src=url;
+});
+
+btnClassify.addEventListener('click', async ()=>{
+  if(!classifier) return;
+  statusEl.textContent='Clasificando…';
+  try{
+    const results=await classifier.classify(imgEl,5);
+    statusEl.textContent='Listo ✔️';
+    renderResults(results);
+  }catch(e){
+    console.error(e);
+    statusEl.textContent='No se pudo clasificar (¿CORS?). Prueba otra URL.';
+  }
+});
+
+function renderResults(results){
+  const labels=results.map(r=>r.label.split(', ')[0]);
+  const values=results.map(r=>+(r.confidence*100).toFixed(2));
+  const list=document.getElementById('list');
+  list.innerHTML='<ol>'+results.map(r=>`<li><strong>${r.label}</strong> — ${(r.confidence*100).toFixed(2)}%`).join('')+'</ol>';
+  const ctx=document.getElementById('chart');
+  if(!chart){
+    chart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Confianza (%)',data:values}]},options:{scales:{y:{beginAtZero:true,max:100}},plugins:{legend:{display:false}}}});
+  }else{
+    chart.data.labels=labels; chart.data.datasets[0].data=values; chart.update();
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gráfico de Líneas — Chart.js</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head><body>
+<header>
+  <h1>GRÁFICOS DE BARRAS Y LINEAS</h1>
+  <nav>
+    <a class="btn" href="index.html">Inicio</a>
+    <a class="btn" href="chart-bar.html">Barras</a>
+    <a class="btn" href="tabla.html">Tabla (Chile)</a>
+    <a class="btn" href="ml5.html">ml5.js</a>
+  </nav>
+</header>
+<main>
+  <section class="card">
+    <header><h2>Usuarios activos por día (demo)</h2></header>
+    <div class="content">
+      <canvas id="cline" height="320"></canvas>
+    </div>
+  </section>
+</main>
+<footer>Chart.js con datos simples.</footer>
+<script>
+const ctx=document.getElementById('cline');
+new Chart(ctx,{type:'line',data:{labels:['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],datasets:[{label:'Usuarios',data:[30,42,38,50,61,45,33],tension:.3,fill:false}]},options:{scales:{y:{beginAtZero:true}}}});
+</script>
+</body></html>

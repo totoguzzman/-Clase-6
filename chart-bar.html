@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gráfico de Barras — Chart.js</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head><body>
+<header>
+  <h1>MI PRIMER GRÁFICO</h1>
+  <nav>
+    <a class="btn" href="index.html">Inicio</a>
+    <a class="btn" href="chart-line.html">Líneas</a>
+    <a class="btn" href="tabla.html">Tabla (Chile)</a>
+    <a class="btn" href="ml5.html">ml5.js</a>
+  </nav>
+</header>
+<main>
+  <section class="card">
+    <header><h2>Ventas por categoría (demo)</h2></header>
+    <div class="content">
+      <canvas id="cbar" height="320"></canvas>
+    </div>
+  </section>
+</main>
+<footer>Chart.js desde CDN.</footer>
+<script>
+const ctx=document.getElementById('cbar');
+new Chart(ctx,{type:'bar',data:{labels:['A','B','C','D','E'],datasets:[{label:'Unidades',data:[12,19,7,14,9]}]},options:{scales:{y:{beginAtZero:true}}}});
+</script>
+</body></html>
